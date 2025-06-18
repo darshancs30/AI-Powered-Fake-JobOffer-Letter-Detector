@@ -10,5 +10,5 @@ Pillow==10.0.0
 pytesseract==0.3.10
 opencv-python==4.8.1.78
 requests==2.31.0
-werkzeug==2.3.7 
-setuptools==69.0.3
+werkzeug==2.3.7
+setuptools
