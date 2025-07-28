@@ -112,3 +112,52 @@ This project is part of the SAP Hackfest - AI-Powered fake job offer letter dete
 ## Support
 
 For questions or support, please refer to the project documentation or contact the development team. 
+
+If your React app at [http://localhost:3000](http://localhost:3000) is not loading, here are the steps to diagnose and fix the issue:
+
+---
+
+### 1. **Check Terminal Output**
+- Look at your terminal where you ran `npm start`.
+- Are there any errors or warnings?  
+  If yes, please copy and share them here.
+
+---
+
+### 2. **Check for Compilation Errors**
+- If there are errors like "Failed to compile" or missing files, the app will not start.
+- If you see a message like "Compiled successfully!", the app should be running.
+
+---
+
+### 3. **Check for Port Conflicts**
+- If another app is using port 3000, React may prompt you to use another port or fail to start.
+- Try stopping all other local servers and run `npm start` again.
+
+---
+
+### 4. **Try Restarting the Server**
+- Stop the current process (press `Ctrl+C` in the terminal).
+- Run:
+  ```sh
+  npm start
+  ```
+- Watch for any errors in the terminal.
+
+---
+
+### 5. **Check Browser/Network**
+- Make sure you are opening the correct URL: [http://localhost:3000](http://localhost:3000)
+- Try a different browser or incognito mode.
+
+---
+
+### 6. **Check for Missing Dependencies**
+- If you see errors about missing modules, run:
+  ```sh
+  npm install
+  ```
+
+---
+
+**Please let me know what you see in your terminal after running `npm start`. If there are any error messages, paste them here and I’ll help you fix them!** 
