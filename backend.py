@@ -64,9 +64,23 @@ def extract_text_from_pdf(file_path):
         with open(file_path, 'rb') as file:
             pdf_reader = PyPDF2.PdfReader(file)
             text = ""
-            for page in pdf_reader.pages:
-                text += page.extract_text() + " "
-        return text.strip()
+            for page_num, page in enumerate(pdf_reader.pages):
+                page_text = page.extract_text()
+                if page_text:
+                    text += page_text + " "
+        # Always run OCR and combine results
+        try:
+            from pdf2image import convert_from_path
+            images = convert_from_path(file_path)
+            ocr_text = ""
+            for img in images:
+                ocr_text += pytesseract.image_to_string(img) + " "
+            # Combine both extracted text and OCR text, avoid duplicates
+            combined_text = text.strip() + "\n" + ocr_text.strip()
+            return combined_text.strip()
+        except Exception as ocr_e:
+            print(f"OCR extraction failed: {ocr_e}")
+            return text.strip()
     except Exception as e:
         print(f"Error extracting text from PDF: {e}")
         return ""
