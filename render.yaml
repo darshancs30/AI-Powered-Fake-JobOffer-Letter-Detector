@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: fake-job-offer-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python backend.py
+    autoDeploy: true
+    envVars:
+      - key: FLASK_ENV
+        value: production
