@@ -1,1 +1,41 @@
+<<<<<<< HEAD
 node_modules
+=======
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment
+.env
+.venv
+venv/
+ENV/
+
+# Model files
+models/
+*.pkl
+
+# Uploaded files
+uploads/
+
+# User submissions
+user_submissions.csv
+
+# VSCode
+.vscode/
+
+# Node modules
+frontend/node_modules/
+
+# Build output
+frontend/build/
+
+# OS files
+.DS_Store
+Thumbs.db 
+>>>>>>> 48562def39d37cc7a9f698a2417c4f337ac070b9
