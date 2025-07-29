@@ -1,19 +1,16 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
-import { 
-  Upload, 
-  FileText, 
-  AlertTriangle, 
-  CheckCircle, 
-  Shield, 
-  Info,
-  Loader2,
-  File,
-  X,
-  RefreshCw
-} from 'lucide-react';
 import './App.css';
+import Header from './components/Header';
+import { AlertTriangle, CheckCircle } from 'lucide-react';
+import Footer from './components/Footer';
+import ModelInfo from './components/ModelInfo';
+import ErrorMessage from './components/ErrorMessage';
+import Loading from './components/Loading';
+import FileUpload from './components/FileUpload';
+import TextInput from './components/TextInput';
+import Results from './components/Results';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -119,215 +116,49 @@ function App() {
     return prediction === 'Fake' ? <AlertTriangle size={24} /> : <CheckCircle size={24} />;
   };
 
+
+  // Animation hooks for entrance effects
+  React.useEffect(() => {
+    const app = document.querySelector('.App');
+    if (app) app.classList.add('app-animate');
+  }, []);
+
   return (
-    <div className="App">
-      {/* Header */}
-      <header className="header">
-        <div className="header-content">
-          <div className="logo">
-            <Shield className="logo-icon" />
-            <h1>AI Job Offer Detector</h1>
+    <div className="App app-animate" style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden' }}>
+
+      {/* Animated AI/Fraud Background */}
+      <div className="ai-bg-animation bg-float"></div>
+      <div className="ai-bg-images">
+        <img src="https://cdn-icons-png.flaticon.com/512/3062/3062634.png" alt="AI Shield" className="img1 spin" />
+        <img src="https://cdn-icons-png.flaticon.com/512/3062/3062635.png" alt="Fraud Alert" className="img2 pulse" />
+        <img src="https://cdn-icons-png.flaticon.com/512/3062/3062636.png" alt="AI Brain" className="img3 float" />
+      </div>
+
+      {/* Header with entrance animation */}
+      <div className="header-animate">
+        <Header />
+      </div>
+
+      {/* Main Content with fade/slide animation */}
+      <main className="main-content fade-in" style={{ position: 'relative', zIndex: 2 }}>
+        <div className="container scale-in">
+          <ModelInfo modelInfo={modelInfo} />
+          <div className="input-methods input-animate">
+            <FileUpload getRootProps={getRootProps} getInputProps={getInputProps} isDragActive={isDragActive} />
+            <TextInput text={text} setText={setText} handleTextSubmit={handleTextSubmit} loading={loading} />
           </div>
-          <p className="subtitle">Detect fake job offers using advanced AI technology</p>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="main-content">
-        <div className="container">
-          {/* Model Info */}
-          {modelInfo && (
-            <div className="model-info">
-              <Info size={16} />
-              <span>
-                Model Accuracy: <strong>{modelInfo.accuracy ? (modelInfo.accuracy * 100).toFixed(1) : 'N/A'}%</strong>
-                {modelInfo.total_samples && ` | Trained on ${modelInfo.total_samples.toLocaleString()} samples`}
-              </span>
-            </div>
-          )}
-
-          {/* Input Methods */}
-          <div className="input-methods">
-            {/* File Upload */}
-            <div className="input-section">
-              <h2>
-                <Upload size={20} />
-                Upload File
-              </h2>
-              <p>Upload PDF, DOCX, TXT, or image files</p>
-              
-              <div 
-                {...getRootProps()} 
-                className={`dropzone ${isDragActive ? 'drag-active' : ''}`}
-              >
-                <input {...getInputProps()} />
-                <Upload size={48} className="upload-icon" />
-                <p>
-                  {isDragActive
-                    ? "Drop the file here..."
-                    : "Drag & drop a file here, or click to select"
-                  }
-                </p>
-                <small>Supports: PDF, DOCX, TXT, JPG, PNG, BMP, TIFF (Max: 16MB)</small>
-              </div>
-            </div>
-
-            {/* Text Input */}
-            <div className="input-section">
-              <h2>
-                <FileText size={20} />
-                Paste Text
-              </h2>
-              <p>Or paste job offer text directly</p>
-              
-              <form onSubmit={handleTextSubmit}>
-                <textarea
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  placeholder="Paste your job offer letter here..."
-                  rows="8"
-                  className="text-input"
-                />
-                <button 
-                  type="submit" 
-                  className="analyze-btn"
-                  disabled={loading || !text.trim()}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 size={16} className="spinner" />
-                      Analyzing...
-                    </>
-                  ) : (
-                    <>
-                      <Shield size={16} />
-                      Analyze Text
-                    </>
-                  )}
-                </button>
-              </form>
-            </div>
-          </div>
-
-          {/* Error Display */}
-          {error && (
-            <div className="error-message">
-              <X size={16} />
-              <p>{error}</p>
-            </div>
-          )}
-
-          {/* Loading Indicator */}
-          {loading && (
-            <div className="loading">
-              <Loader2 size={48} className="spinner" />
-              <p>Analyzing your job offer...</p>
-              <small>This may take a few seconds</small>
-            </div>
-          )}
-
-          {/* Results */}
-          {result && (
-            <div className="results">
-              <div className="results-header">
-                <h2>Analysis Results</h2>
-                <button onClick={clearResults} className="clear-btn">
-                  <RefreshCw size={16} />
-                  Analyze Another
-                </button>
-              </div>
-
-              <div className="result-card">
-                {/* Prediction */}
-                <div className="prediction-section">
-                  <div 
-                    className="prediction-badge"
-                    style={{ backgroundColor: getPredictionColor(result.prediction) }}
-                  >
-                    {getPredictionIcon(result.prediction)}
-                    <span>{result.prediction}</span>
-                  </div>
-                  
-                  <div className="confidence-section">
-                    <h3>Confidence Score</h3>
-                    <div className="confidence-bar">
-                      <div 
-                        className="confidence-fill"
-                        style={{ 
-                          width: `${result.confidence * 100}%`,
-                          backgroundColor: getPredictionColor(result.prediction)
-                        }}
-                      />
-                    </div>
-                    <p className="confidence-text">{result.confidence_percentage}</p>
-                  </div>
-                </div>
-
-                {/* File Info */}
-                {result.filename && (
-                  <div className="file-info">
-                    <File size={16} />
-                    <span>
-                      <strong>{result.filename}</strong> ({result.file_type.toUpperCase()})
-                    </span>
-                  </div>
-                )}
-
-                {/* Fraud Indicators */}
-                <div className="indicators-section">
-                  <h3>Fraud Indicators Detected</h3>
-                  <div className="indicators-grid">
-                    {Object.entries(result.fraud_indicators).map(([key, value]) => (
-                      <div key={key} className={`indicator ${value > 0 ? 'detected' : 'none'}`}>
-                        <span className="indicator-name">
-                          {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                        </span>
-                        <span className="indicator-value">
-                          {value > 0 ? `${value} detected` : 'None found'}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Explanation */}
-                <div className="explanation-section">
-                  <h3>AI Explanation</h3>
-                  <div className="explanation-list">
-                    {result.explanation.map((item, index) => (
-                      <div key={index} className="explanation-item">
-                        {item}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Text Preview */}
-                <div className="text-preview">
-                  <h3>Extracted Text Preview</h3>
-                  <div className="text-content">
-                    {result.text}
-                    {result.text_length > 500 && (
-                      <div className="text-truncated">
-                        <small>... (showing first 500 characters)</small>
-                      </div>
-                    )}
-                  </div>
-                  <small>Text length: {result.text_length} characters</small>
-                </div>
-              </div>
-            </div>
-          )}
+          <ErrorMessage error={error} animate />
+          <Loading loading={loading} animate />
+          <Results result={result} clearResults={clearResults} animate />
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="footer">
-        <p>Powered by Machine Learning • Built with React & Flask</p>
-        <p>Protect yourself from job scams with AI-powered detection</p>
-      </footer>
+      {/* Footer with entrance animation */}
+      <div className="footer-animate">
+        <Footer />
+      </div>
     </div>
   );
 }
 
-export default App; 
+export default App;
